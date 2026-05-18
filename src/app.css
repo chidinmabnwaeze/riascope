@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+:global(html, body) {
+	min-height: 100%;
+}
+
+:global(body) {
+	margin: 0;
+	/* background: #f8f4ff; */
+	background-image: url('./assets/ria_medical_background 1.png');
+	background-size: cover;
+}
+
+* {
+	font-family: 'Nunito', sans-serif;
+}
+
+.bg-gradient-to-r {
+	--color-start: #b7164f;
+	--color-middle: #8c2d7a;
+	--color-end: #4f2c84;
+}
+
+.bg-gradient {
+	background: linear-gradient(to right, var(--color-start), var(--color-middle), var(--color-end));
+}
+
+.bg-img {
+	background-image: url('./assets/ria_medical_background 1.png');
+	background-size: cover;
+	min-height: 100vh;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+/* :var-color */
+ /* from-[#b7164f] via-[#8c2d7a] to-[#4f2c84] */
