@@ -1,6 +1,6 @@
 <script lang="ts">
 	const buttonLabel = 'Begin session';
-	import img from "../../static/assets/IMG-20260407-WA0004 2.png"
+	import img from "../lib/assets/IMG-20260407-WA0004 2.png";
 </script>
 
 
@@ -13,7 +13,7 @@
 	<div class="relative mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-center px-6 py-24 text-center">
 		<div class="space-y-10">
 			<div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-white/70 bg-white/80 shadow-[0_20px_70px_rgba(119,70,159,0.14)] backdrop-blur-md">
-				<span class="text-sm font-semibold uppercase tracking-[0.32em] text-[#6f2f84]">RIA</span>
+				<!-- <span class="text-sm font-semibold uppercase tracking-[0.32em] text-[#6f2f84]">RIA</span> -->
 				<img src={img} alt="Riascope Logo" />
 			</div>
 

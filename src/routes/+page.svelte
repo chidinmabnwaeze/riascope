@@ -1,6 +1,6 @@
 <script lang="ts">
-	import GetStarted from "../components/GetStarted.svelte";
-import Home from "../components/Home.svelte"
+	import GetStarted from '../components/GetStarted.svelte';
+	import Home from '../components/Home.svelte';
 	const buttonLabel = 'Begin session';
 </script>
 
@@ -37,6 +37,5 @@ import Home from "../components/Home.svelte"
 </section> -->
 
 <main>
-<Home/>
-
+	<Home />
 </main>
