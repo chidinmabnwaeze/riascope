@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import PageShell from '$lib/components/PageShell.svelte';
+	import PageShell from '../../../components/PageShell.svelte';
 	import { activeSession } from '$lib/stores';
 	import type { FilmType } from '$lib/types';
 
@@ -35,10 +35,10 @@
 				<button
 					type="button"
 					onclick={() => (selected = 'Thick')}
-					class="relative overflow-hidden rounded-3xl p-7 text-left text-white transition-all duration-300 hover:-translate-y-1"
+					class="relative bg-primary-gradient overflow-hidden rounded-3xl p-7 text-left text-white transition-all duration-300 hover:-translate-y-1"
 					class:ring-4={selected === 'Thick'}
 					class:ring-rose-300={selected === 'Thick'}
-					style="background: linear-gradient(135deg, #c2185b 0%, #6e0d3e 100%); box-shadow: 0 14px 36px -14px rgba(125, 14, 70, 0.5);"
+					// style="background: linear-gradient(135deg, #c2185b 0%, #6e0d3e 100%); box-shadow: 0 14px 36px -14px rgba(125, 14, 70, 0.5);"
 				>
 					<div class="absolute inset-0 opacity-15 pointer-events-none" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 18px 18px;"></div>
 
@@ -65,10 +65,10 @@
 				<button
 					type="button"
 					onclick={() => (selected = 'Thin')}
-					class="relative overflow-hidden rounded-3xl p-7 text-left text-white transition-all duration-300 hover:-translate-y-1"
+					class="relative bg-primary-gradient overflow-hidden rounded-3xl p-7 text-left text-white transition-all duration-300 hover:-translate-y-1"
 					class:ring-4={selected === 'Thin'}
 					class:ring-rose-300={selected === 'Thin'}
-					style="background: linear-gradient(135deg, #a51653 0%, #4a0a2c 100%); box-shadow: 0 14px 36px -14px rgba(125, 14, 70, 0.5);"
+					
 				>
 					<div class="absolute inset-0 opacity-15 pointer-events-none" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 18px 18px;"></div>
 
@@ -99,7 +99,7 @@
 					<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
 					Back
 				</button>
-				<button class="pill-btn btn-primary w-full sm:w-auto" disabled={!selected} onclick={begin} class:opacity-50={!selected} class:cursor-not-allowed={!selected}>
+				<button class="pill-btn bg-primary-gradient text-white  w-full sm:w-auto" disabled={!selected} onclick={begin} class:opacity-50={!selected} class:cursor-not-allowed={!selected}>
 					Begin analysis
 					<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
 				</button>
@@ -107,9 +107,9 @@
 		</div>
 
 		<div class="mt-6 flex items-center justify-center gap-2">
-			<span class="h-1.5 w-3 rounded-full bg-rose-300"></span>
-			<span class="h-1.5 w-8 rounded-full bg-rose-600"></span>
-			<span class="h-1.5 w-3 rounded-full bg-rose-300"></span>
+			<span class="h-1.5 w-3 rounded-full bg-[#982f78]"></span>
+			<span class="h-1.5 w-8 rounded-full bg-[#573c96]"></span>
+			<span class="h-1.5 w-3 rounded-full bg-[#982f78]"></span>
 		</div>
 	</div>
 </PageShell>

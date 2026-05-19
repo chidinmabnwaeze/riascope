@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import PageShell from '$lib/components/PageShell.svelte';
+	import PageShell from '../../../components/PageShell.svelte';
 	import { activeSession } from '$lib/stores';
 
 	let firstName = $state('');
@@ -50,8 +50,8 @@
 	<div class="w-full max-w-2xl mx-auto mt-4 fade-in">
 		<div class="glass-card p-7 sm:p-10">
 			<div class="text-center mb-7">
-				<p class="text-xs uppercase tracking-[0.25em] text-rose-700/70 font-semibold mb-2">Step 1 of 3</p>
-				<h2 class="font-display italic text-rose-800 text-2xl sm:text-3xl">Enter patient information</h2>
+				<p class="text-xs uppercase tracking-[0.25em] text-primary-gradient font-semibold mb-2">Step 1 of 3</p>
+				<h2 class="font-display italic text-primary-gradient text-2xl sm:text-3xl">Enter patient information</h2>
 				<p class="text-ink-soft text-sm mt-2">This information will be attached to the diagnostic record.</p>
 			</div>
 
@@ -93,7 +93,7 @@
 					<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
 					Cancel session
 				</button>
-				<button class="pill-btn btn-primary w-full sm:w-auto" onclick={proceed}>
+				<button class="pill-btn bg-primary-gradient text-white  w-full sm:w-auto" onclick={proceed}>
 					Continue
 					<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
 				</button>

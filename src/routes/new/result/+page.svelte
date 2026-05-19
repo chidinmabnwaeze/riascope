@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { get } from 'svelte/store';
-	import PageShell from '$lib/components/PageShell.svelte';
+	import PageShell from '../../../components/PageShell.svelte';
 	import { records, resetSession } from '$lib/stores';
 	import type { DiagnosticRecord } from '$lib/types';
 
@@ -86,7 +86,7 @@
 					</div>
 				</div>
 
-				<button class="pill-btn btn-primary w-full mt-7" onclick={viewSnapshots}>
+				<button class="pill-btn bg-primary-gradient w-full mt-7" onclick={viewSnapshots}>
 					View snapshots
 					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 						<rect x="3" y="3" width="18" height="18" rx="2" />
@@ -98,7 +98,7 @@
 
 			<div class="mt-5 flex flex-col-reverse sm:flex-row items-center justify-center gap-3">
 				<button class="pill-btn btn-secondary w-full sm:w-auto" onclick={close}>Close analysis</button>
-				<button class="pill-btn btn-primary w-full sm:w-auto" onclick={reanalyze}>
+				<button class="pill-btn bg-primary-gradient w-full sm:w-auto" onclick={reanalyze}>
 					Reanalyze sample
 					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 						<path d="M3 12a9 9 0 0 1 15-6.7L21 8" />

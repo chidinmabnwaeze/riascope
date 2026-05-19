@@ -6,9 +6,13 @@
 
 :global(body) {
 	margin: 0;
-	/* background: #f8f4ff; */
-	background-image: url('./lib/assets/ria_medical_background\\ 1.png');
+	min-height: 100vh;
+	background-color: #f8f4ff;
+	background-image: url("./lib/assets/ria_medical_background 1.png");
 	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
 }
 
 * {
@@ -26,7 +30,7 @@
 }
 
 .bg-img {
-	background-image: url('./assets/ria_medical_background 1.png');
+	background-image: url("./lib/assets/ria_medical_background 1.png");
 	background-size: cover;
 	min-height: 100vh;
 	background-position: center;
@@ -41,9 +45,7 @@
 	/* --color-soft-color: #feb3c7; */
 }
 
-
-@import "tailwindcss";
-
+/* 
 @theme {
 	--font-display: 'Fraunces', ui-serif, Georgia, serif;
 	--font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
@@ -79,10 +81,12 @@
 	--shadow-card: 0 4px 24px -10px rgba(60, 24, 70, 0.18);
 
 	--radius-card: 28px;
-}
+} */
 
 @layer base {
-	html, body {
+
+	html,
+	body {
 		font-family: var(--font-sans);
 		color: var(--color-ink);
 		-webkit-font-smoothing: antialiased;
@@ -97,6 +101,31 @@
 	::selection {
 		background: var(--color-rose-300);
 		color: white;
+	}
+}
+
+@layer utilities {
+	.bg-primary-gradient {
+		@apply bg-gradient-to-r from-[#c32a63] via-[#982f78] to-[#573c96];
+		color: white;
+		box-shadow: 0 10px 28px -8px rgba(125, 14, 70, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+
+	}
+
+	.text-primary-gradient {
+		@apply bg-gradient-to-r from-[#c32a63] via-[#982f78] to-[#573c96] bg-clip-text text-transparent;
+	}
+
+	.border-primary-gradient {
+		border-image: linear-gradient(to right, #c32a63, #982f78, #573c96) 1;
+	}
+
+	.global-bg {
+		background-image: url("./lib/assets/ria_medical_background 1.png");
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+		background-attachment: fixed;
 	}
 }
 
@@ -128,7 +157,7 @@
 		backdrop-filter: blur(14px);
 		border: 1px solid rgba(255, 255, 255, 0.7);
 		box-shadow: var(--shadow-card);
-		border-radius: var(--radius-card);
+		border-radius: 20px;
 	}
 
 	.pill-btn {
@@ -149,15 +178,15 @@
 		transform: translateY(1px);
 	}
 
-	.btn-primary {
-		background: linear-gradient(135deg, #b8266b 0%, #7d0e46 100%);
+	/* .btn-primary {
+		background: bg-primary-gradient;
 		color: white;
-		box-shadow: 0 10px 28px -8px rgba(125, 14, 70, 0.55), inset 0 1px 0 rgba(255,255,255,0.15);
-	}
+		box-shadow: 0 10px 28px -8px rgba(125, 14, 70, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+	} */
 
 	.btn-primary:hover {
 		filter: brightness(1.08);
-		box-shadow: 0 14px 36px -8px rgba(125, 14, 70, 0.65), inset 0 1px 0 rgba(255,255,255,0.2);
+		box-shadow: 0 14px 36px -8px rgba(125, 14, 70, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.2);
 	}
 
 	.btn-secondary {
@@ -225,22 +254,44 @@
 		animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 	}
 
-	.stagger > * {
+	.stagger>* {
 		animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 	}
-	.stagger > *:nth-child(1) { animation-delay: 0.05s; }
-	.stagger > *:nth-child(2) { animation-delay: 0.14s; }
-	.stagger > *:nth-child(3) { animation-delay: 0.22s; }
-	.stagger > *:nth-child(4) { animation-delay: 0.30s; }
-	.stagger > *:nth-child(5) { animation-delay: 0.38s; }
-	.stagger > *:nth-child(6) { animation-delay: 0.46s; }
-	.stagger > *:nth-child(7) { animation-delay: 0.54s; }
+
+	.stagger>*:nth-child(1) {
+		animation-delay: 0.05s;
+	}
+
+	.stagger>*:nth-child(2) {
+		animation-delay: 0.14s;
+	}
+
+	.stagger>*:nth-child(3) {
+		animation-delay: 0.22s;
+	}
+
+	.stagger>*:nth-child(4) {
+		animation-delay: 0.30s;
+	}
+
+	.stagger>*:nth-child(5) {
+		animation-delay: 0.38s;
+	}
+
+	.stagger>*:nth-child(6) {
+		animation-delay: 0.46s;
+	}
+
+	.stagger>*:nth-child(7) {
+		animation-delay: 0.54s;
+	}
 
 	@keyframes fadeUp {
 		from {
 			opacity: 0;
 			transform: translateY(14px);
 		}
+
 		to {
 			opacity: 1;
 			transform: translateY(0);
@@ -248,17 +299,20 @@
 	}
 
 	@keyframes shimmer {
-		0% { background-position: -200% 0; }
-		100% { background-position: 200% 0; }
+		0% {
+			background-position: -200% 0;
+		}
+
+		100% {
+			background-position: 200% 0;
+		}
 	}
 
 	.scanning {
-		background: linear-gradient(
-			90deg,
-			rgba(184, 38, 107, 0) 0%,
-			rgba(184, 38, 107, 0.18) 50%,
-			rgba(184, 38, 107, 0) 100%
-		);
+		background: linear-gradient(90deg,
+				rgba(184, 38, 107, 0) 0%,
+				rgba(184, 38, 107, 0.18) 50%,
+				rgba(184, 38, 107, 0) 100%);
 		background-size: 200% 100%;
 		animation: shimmer 2.2s ease-in-out infinite;
 	}

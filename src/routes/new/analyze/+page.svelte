@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import PageShell from '$lib/components/PageShell.svelte';
+	import PageShell from '../../../components/PageShell.svelte';
 	import { activeSession, sampleSnapshots, addRecord } from '$lib/stores';
 	import type { ActiveSession, DiagnosticRecord, AnalysisStatus, AnalysisGrade } from '$lib/types';
 
@@ -184,7 +184,7 @@
 				</div>
 
 				<div class="mt-auto pt-7 space-y-3">
-					<button class="pill-btn btn-primary w-full" disabled={analyzing} onclick={analyzeSample}>
+					<button class="pill-btn bg-primary-gradient text-white  w-full" disabled={analyzing} onclick={analyzeSample}>
 						{#if analyzing}
 							<svg class="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none">
 								<circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="3" />

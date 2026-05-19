@@ -35,7 +35,21 @@ import {goto} from "$app/navigation";
 					<div class={
 						'mb-6 flex h-16 w-16 items-center justify-center rounded-3xl ' +
 						(card.variant === 'primary' ? 'bg-white/15' : 'bg-[#f5f2ff]')
-					}>
+					} onclick = {() => goto (card.variant === "primary" ? "/new/analyze" : "/records")}>
+							{#if card.variant === 'primary'}
+								<svg class="h-8 w-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+									<path d="M6 18h12" />
+									<path d="M10 14.75V11a3 3 0 0 1 6 0v3.75" />
+									<path d="M9 18a3 3 0 0 1 6 0" />
+									<path d="M12 4v4" />
+									<path d="M8 8h8" />
+								</svg>
+							{:else}
+								<svg class="h-8 w-8 text-[#8d3d7f]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+									<circle cx="11" cy="11" r="7" />
+									<path d="M16.65 16.65L21 21" />
+								</svg>
+							{/if}
 						{#if card.variant === 'primary'}
 							<svg class="h-8 w-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 								<path d="M6 18h12" />
@@ -63,11 +77,11 @@ import {goto} from "$app/navigation";
 		</div>
 
 		<div class="mt-14 flex w-full flex-col items-center justify-center gap-4 sm:flex-row">
-			<button type="button" class="inline-flex items-center justify-center gap-3 rounded-full border border-slate-300 bg-white/95 px-8 py-3 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50" on:click={() => goto("/")}>
+			<button type="button" class="inline-flex items-center justify-center gap-3 rounded-full border border-slate-300 bg-white/95 px-8 py-3 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50" onclick={() => goto("/")}>
 				<span aria-hidden="true">←</span>
 				Cancel session
 			</button>
-			<button type="button" class="inline-flex items-center justify-center gap-3 rounded-full bg-gradient-to-r from-[#c32a63] via-[#982f78] to-[#573c96] px-8 py-3 text-sm font-medium text-white shadow-[0_18px_40px_rgba(119,70,159,0.24)] transition hover:opacity-95" on:click={() => goto("/patient-details")}>
+			<button type="button" class="inline-flex items-center justify-center gap-3 rounded-full bg-gradient-to-r from-[#c32a63] via-[#982f78] to-[#573c96] px-8 py-3 text-sm font-medium text-white shadow-[0_18px_40px_rgba(119,70,159,0.24)] transition hover:opacity-95" onclick={() => goto("/new/analyze")}>
 				Start session
 				<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 					<path d="M9 5l7 7-7 7" />

@@ -2,8 +2,8 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { get } from 'svelte/store';
-	import PageShell from '$lib/components/PageShell.svelte';
-	import BackButton from '$lib/components/BackButton.svelte';
+	import PageShell from '../../../components/PageShell.svelte';
+	import BackButton from '../../../components/BackButton.svelte';
 	import { records } from '$lib/stores';
 	import type { DiagnosticRecord } from '$lib/types';
 
