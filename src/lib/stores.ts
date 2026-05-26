@@ -15,7 +15,7 @@ const emptySession: ActiveSession = {
 	firstName: '',
 	surname: '',
 	patientId: '',
-	analysisDate: new Date().toISOString().slice(0, 10),
+	created_at: new Date().toISOString().slice(0, 10),
 	filmType: null,
 	snapshots: []
 };
@@ -25,7 +25,7 @@ export const activeSession = writable<ActiveSession>({ ...emptySession });
 export function resetSession() {
 	activeSession.set({
 		...emptySession,
-		analysisDate: new Date().toISOString().slice(0, 10)
+		created_at: new Date().toISOString().slice(0, 10)
 	});
 }
 

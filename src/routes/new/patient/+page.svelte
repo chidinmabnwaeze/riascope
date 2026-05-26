@@ -2,19 +2,23 @@
 	import { goto } from '$app/navigation';
 	import PageShell from '../../../components/PageShell.svelte';
 	import { activeSession } from '$lib/stores';
+	import {userService} from "$lib/services/user"
 
 	let firstName = $state('');
 	let surname = $state('');
 	let patientId = $state('');
-	let analysisDate = $state(new Date().toISOString().slice(0, 10));
+	let created_at = $state(new Date().toISOString().slice(0, 10));
 	let error = $state('');
+	let loading = $state(false)
+
+
 
 	// Hydrate from store on mount
 	activeSession.subscribe((s) => {
 		if (s.firstName) firstName = s.firstName;
 		if (s.surname) surname = s.surname;
 		if (s.patientId) patientId = s.patientId;
-		if (s.analysisDate) analysisDate = s.analysisDate;
+		if (s.created_at) created_at = s.created_at;
 	})();
 
 	function cancel() {
@@ -22,6 +26,24 @@
 	}
 
 	function proceed() {
+
+const createPatient = async()=>{
+	const patientData = {
+		firstName,
+		surname,
+		patientId,
+		created_at
+	}
+	try{
+		const response = await userService.createUser(patientData)
+
+	}catch(err:any){
+console.log("Creating Patient Failed:", err)
+	}
+}
+
+
+
 		if (!firstName.trim() || !surname.trim() || !patientId.trim()) {
 			error = 'Please complete all fields before continuing.';
 			return;
@@ -31,7 +53,7 @@
 			firstName: firstName.trim(),
 			surname: surname.trim(),
 			patientId: patientId.trim(),
-			analysisDate
+			created_at
 		}));
 		goto('/new/film-type');
 	}
@@ -71,12 +93,12 @@
 				<div class="sm:col-span-2">
 					<label for="dt" class="field-label block">Analysis date</label>
 					<div class="relative">
-						<input id="dt" type="date" class="field-input pl-11" bind:value={analysisDate} />
+						<input id="dt" type="date" class="field-input pl-11" bind:value={created_at} />
 						<svg class="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7d0e46" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
 							<rect x="3" y="4" width="18" height="18" rx="2" />
 							<path d="M16 2v4M8 2v4M3 10h18" />
 						</svg>
-						<span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-ink-soft pointer-events-none hidden sm:inline">{formattedDate(analysisDate)}</span>
+						<span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-ink-soft pointer-events-none hidden sm:inline">{formattedDate(created_at)}</span>
 					</div>
 				</div>
 			</div>

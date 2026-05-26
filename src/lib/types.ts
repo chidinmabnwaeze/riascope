@@ -6,7 +6,7 @@ export interface PatientInfo {
 	firstName: string;
 	surname: string;
 	patientId: string;
-	analysisDate: string; // ISO yyyy-mm-dd
+	created_at: string; // ISO yyyy-mm-dd
 }
 
 export interface DiagnosticRecord {

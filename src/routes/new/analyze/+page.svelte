@@ -8,7 +8,7 @@
 		firstName: '',
 		surname: '',
 		patientId: '',
-		analysisDate: '',
+		created_at: '',
 		filmType: null,
 		snapshots: []
 	});
@@ -64,7 +64,7 @@
 				patientId: session.patientId,
 				firstName: session.firstName,
 				surname: session.surname,
-				date: session.analysisDate,
+				date: session.created_at,
 				status,
 				grade,
 				filmType: (session.filmType ?? 'Thin') as 'Thick' | 'Thin',
@@ -179,7 +179,7 @@
 					</div>
 					<div>
 						<p class="field-label">Date</p>
-						<p class="font-semibold text-ink">{formatDateLong(session.analysisDate)}</p>
+						<p class="font-semibold text-ink">{formatDateLong(session.created_at)}</p>
 					</div>
 				</div>
 
