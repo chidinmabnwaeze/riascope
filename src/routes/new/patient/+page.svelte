@@ -2,16 +2,14 @@
 	import { goto } from '$app/navigation';
 	import PageShell from '../../../components/PageShell.svelte';
 	import { activeSession } from '$lib/stores';
-	import {userService} from "$lib/services/user"
+	import { userService } from '$lib/services/user';
 
 	let firstName = $state('');
 	let surname = $state('');
 	let patientId = $state('');
 	let created_at = $state(new Date().toISOString().slice(0, 10));
 	let error = $state('');
-	let loading = $state(false)
-
-
+	let loading = $state(false);
 
 	// Hydrate from store on mount
 	activeSession.subscribe((s) => {
@@ -25,37 +23,40 @@
 		goto('/');
 	}
 
-	function proceed() {
+	const createPatient = async () => {
+		const patientData = {
+			firstName,
+			surname,
+			patientId,
+			created_at
+		};
+		try {
+			loading = true;
+			const response = await userService.createUser(patientData);
+			console.log('Patient Created', response);
 
-const createPatient = async()=>{
-	const patientData = {
-		firstName,
-		surname,
-		patientId,
-		created_at
-	}
-	try{
-		const response = await userService.createUser(patientData)
+			activeSession.update((data) => ({
+				...data,
+				firstName: firstName.trim(),
+				surname: surname.trim(),
+				patientId: patientId.trim(),
+				created_at
+			}));
+			goto('/new/film-type');
+		} catch (err: any) {
+			console.log('Creating Patient Failed:', err);
+		} finally {
+			loading = false;
+		}
+	};
 
-	}catch(err:any){
-console.log("Creating Patient Failed:", err)
-	}
-}
-
-
-
+	async function proceed() {
+		error = '';
 		if (!firstName.trim() || !surname.trim() || !patientId.trim()) {
 			error = 'Please complete all fields before continuing.';
 			return;
 		}
-		activeSession.update((s) => ({
-			...s,
-			firstName: firstName.trim(),
-			surname: surname.trim(),
-			patientId: patientId.trim(),
-			created_at
-		}));
-		goto('/new/film-type');
+		await createPatient();
 	}
 
 	function formattedDate(iso: string) {
@@ -72,52 +73,122 @@ console.log("Creating Patient Failed:", err)
 	<div class="w-full max-w-2xl mx-auto mt-4 fade-in">
 		<div class="glass-card p-7 sm:p-10">
 			<div class="text-center mb-7">
-				<p class="text-xs uppercase tracking-[0.25em] text-primary-gradient font-semibold mb-2">Step 1 of 3</p>
-				<h2 class="font-display italic text-primary-gradient text-2xl sm:text-3xl">Enter patient information</h2>
-				<p class="text-ink-soft text-sm mt-2">This information will be attached to the diagnostic record.</p>
+				<p class="text-xs uppercase tracking-[0.25em] text-primary-gradient font-semibold mb-2">
+					Step 1 of 3
+				</p>
+				<h2 class="font-display italic text-primary-gradient text-2xl sm:text-3xl">
+					Enter patient information
+				</h2>
+				<p class="text-ink-soft text-sm mt-2">
+					This information will be attached to the diagnostic record.
+				</p>
 			</div>
 
 			<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 stagger">
 				<div>
 					<label for="fn" class="field-label block">Patient Firstname</label>
-					<input id="fn" type="text" class="field-input" bind:value={firstName} placeholder="e.g. Dara" autocomplete="given-name" />
+					<input
+						id="fn"
+						type="text"
+						class="field-input"
+						bind:value={firstName}
+						placeholder="e.g. Dara"
+						autocomplete="given-name"
+					/>
 				</div>
 				<div>
 					<label for="sn" class="field-label block">Patient Surname</label>
-					<input id="sn" type="text" class="field-input" bind:value={surname} placeholder="e.g. Simi" autocomplete="family-name" />
+					<input
+						id="sn"
+						type="text"
+						class="field-input"
+						bind:value={surname}
+						placeholder="e.g. Simi"
+						autocomplete="family-name"
+					/>
 				</div>
 				<div class="sm:col-span-2">
 					<label for="pid" class="field-label block">Patient ID</label>
-					<input id="pid" type="text" class="field-input font-mono text-sm" bind:value={patientId} placeholder="e.g. 1233444545gjkn844" />
+					<input
+						id="pid"
+						type="text"
+						class="field-input font-mono text-sm"
+						bind:value={patientId}
+						placeholder="e.g. 1233444545gjkn844"
+					/>
 				</div>
 				<div class="sm:col-span-2">
 					<label for="dt" class="field-label block">Analysis date</label>
 					<div class="relative">
 						<input id="dt" type="date" class="field-input pl-11" bind:value={created_at} />
-						<svg class="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7d0e46" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+						<svg
+							class="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
+							width="18"
+							height="18"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="#7d0e46"
+							stroke-width="1.8"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
 							<rect x="3" y="4" width="18" height="18" rx="2" />
 							<path d="M16 2v4M8 2v4M3 10h18" />
 						</svg>
-						<span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-ink-soft pointer-events-none hidden sm:inline">{formattedDate(created_at)}</span>
+						<span
+							class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-ink-soft pointer-events-none hidden sm:inline"
+							>{formattedDate(created_at)}</span
+						>
 					</div>
 				</div>
 			</div>
 
 			{#if error}
 				<p class="mt-4 text-sm text-rose-600 flex items-center gap-2 fade-in" role="alert">
-					<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.4"/><path d="M8 5v3.5M8 10.5v.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+					<svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+						><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.4" /><path
+							d="M8 5v3.5M8 10.5v.5"
+							stroke="currentColor"
+							stroke-width="1.4"
+							stroke-linecap="round"
+						/></svg
+					>
 					{error}
 				</p>
 			{/if}
 
 			<div class="flex flex-col-reverse sm:flex-row items-center justify-between gap-3 mt-8">
 				<button class="pill-btn btn-secondary w-full sm:w-auto" onclick={cancel}>
-					<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+					<svg width="14" height="14" viewBox="0 0 16 16" fill="none"
+						><path
+							d="M10 12L6 8L10 4"
+							stroke="currentColor"
+							stroke-width="1.8"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						/></svg
+					>
 					Cancel session
 				</button>
-				<button class="pill-btn bg-primary-gradient text-white  w-full sm:w-auto" onclick={proceed}>
-					Continue
-					<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+				<button
+					class="pill-btn bg-primary-gradient text-white w-full sm:w-auto"
+					onclick={proceed}
+					disabled={loading}
+				>
+					{#if loading}
+						Creating ...
+					{:else}
+						Continue
+					{/if}
+					<svg width="14" height="14" viewBox="0 0 16 16" fill="none"
+						><path
+							d="M3 8h10M8 3l5 5-5 5"
+							stroke="currentColor"
+							stroke-width="1.8"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						/></svg
+					>
 				</button>
 			</div>
 		</div>
