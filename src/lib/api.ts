@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: process.env.PUBLIC_API_URL,
+    baseURL: (import.meta.env as any).VITE_PUBLIC_API_URL,
     withCredentials: true,
     timeout: 10000,
     headers: {
