@@ -3,10 +3,10 @@ export type AnalysisStatus = 'Positive' | 'Negative';
 export type AnalysisGrade = '1+' | '2+' | '3+' | '4+' | 'Nil';
 
 export interface PatientInfo {
-	firstName: string;
+	first_name: string;
 	surname: string;
-	patientId: string;
-	created_at: string; // ISO yyyy-mm-dd
+	patient_id: string;
+	// created_at: string; // ISO yyyy-mm-dd
 }
 
 export interface DiagnosticRecord {

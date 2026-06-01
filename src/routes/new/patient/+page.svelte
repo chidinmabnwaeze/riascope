@@ -3,20 +3,21 @@
 	import PageShell from '../../../components/PageShell.svelte';
 	import { activeSession } from '$lib/stores';
 	import { userService } from '$lib/services/user';
+	import type { PatientInfo } from '$lib/types';
 
 	let firstName = $state('');
 	let surname = $state('');
 	let patientId = $state('');
-	let created_at = $state(new Date().toISOString().slice(0, 10));
+	// let created_at = $state(new Date().toISOString().slice(0, 10));
 	let error = $state('');
 	let loading = $state(false);
 
 	// Hydrate from store on mount
 	activeSession.subscribe((s) => {
-		if (s.firstName) firstName = s.firstName;
+		if (s.first_name) firstName = s.first_name;
 		if (s.surname) surname = s.surname;
-		if (s.patientId) patientId = s.patientId;
-		if (s.created_at) created_at = s.created_at;
+		if (s.patient_id) patientId = s.patient_id;
+		// if (s.created_at) created_at = s.created_at;
 	})();
 
 	function cancel() {
@@ -24,27 +25,34 @@
 	}
 
 	const createPatient = async () => {
-		const patientData = {
-			firstName,
-			surname,
-			patientId,
-			created_at
+		const patientData: PatientInfo = {
+			first_name: firstName.trim(),
+			surname: surname.trim(),
+			patient_id: patientId.trim()
+			// created_at
 		};
+
 		try {
 			loading = true;
-			const response = await userService.createUser(patientData);
-			console.log('Patient Created', response);
 
-			activeSession.update((data) => ({
-				...data,
+			const response = await userService.createUser(patientData);
+
+			console.log('Patient Created:', response);
+
+			activeSession.update((s) => ({
+				...s,
 				firstName: firstName.trim(),
 				surname: surname.trim(),
-				patientId: patientId.trim(),
-				created_at
+				patientId: patientId.trim()
+				// created_at
 			}));
+
 			goto('/new/film-type');
 		} catch (err: any) {
 			console.log('Creating Patient Failed:', err);
+			console.log('DATA:', err?.response?.data);
+
+			error = err?.response?.data?.message || 'Failed to create patient.';
 		} finally {
 			loading = false;
 		}
@@ -120,7 +128,11 @@
 				<div class="sm:col-span-2">
 					<label for="dt" class="field-label block">Analysis date</label>
 					<div class="relative">
-						<input id="dt" type="date" class="field-input pl-11" bind:value={created_at} />
+						<input id="dt" type="date" class="field-input pl-11" />
+						<!-- <span
+							class="absolute right-16 top-1/2 -translate-y-1/2 text-xs text-ink-soft pointer-events-none hidden sm:inline"
+							>{formattedDate(created_at)}</span> -->
+
 						<svg
 							class="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
 							width="18"
@@ -135,10 +147,6 @@
 							<rect x="3" y="4" width="18" height="18" rx="2" />
 							<path d="M16 2v4M8 2v4M3 10h18" />
 						</svg>
-						<span
-							class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-ink-soft pointer-events-none hidden sm:inline"
-							>{formattedDate(created_at)}</span
-						>
 					</div>
 				</div>
 			</div>
@@ -170,16 +178,8 @@
 					>
 					Cancel session
 				</button>
-				<button
-					class="pill-btn bg-primary-gradient text-white w-full sm:w-auto"
-					onclick={proceed}
-					disabled={loading}
-				>
-					{#if loading}
-						Creating ...
-					{:else}
-						Continue
-					{/if}
+				<button class="pill-btn bg-primary-gradient text-white w-full sm:w-auto" onclick={proceed}>
+					Continue
 					<svg width="14" height="14" viewBox="0 0 16 16" fill="none"
 						><path
 							d="M3 8h10M8 3l5 5-5 5"
