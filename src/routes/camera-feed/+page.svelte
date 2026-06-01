@@ -6,19 +6,20 @@
 
 	let ws;
 
-	let img = new Image();
+	let img;
 
 	/*
-    CHANGE THIS TO YOUR PI IP
+   PI IP
   */
-	const PI_IP = '192.168.1.15';
-
+	const PI_IP = '192.168.1.22';
+  
 	/*
     SAVED SCREENSHOT PATH
   */
 	let savedPath = '';
 
 	onMount(() => {
+		img = new Image();
 		ctx = canvas.getContext('2d');
 
 		ws = new WebSocket(`ws://${PI_IP}:3000`);
