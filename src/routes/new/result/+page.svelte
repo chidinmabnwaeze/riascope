@@ -13,6 +13,12 @@
 		const id = page.url.searchParams.get('id');
 		return allRecords.find((r) => r.id === id) ?? allRecords[0] ?? null;
 	});
+//    export let location;
+
+// 	    $: result = location.state?.result || null;
+//     $: savedFile = location.state?.savedFile || "";
+
+
 
 	function close() {
 		resetSession();

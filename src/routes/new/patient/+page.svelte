@@ -67,12 +67,12 @@
 		await createPatient();
 	}
 
-	function formattedDate(iso: string) {
+	function formattedDate() {
 		try {
-			const d = new Date(iso);
+			const d = new Date();
 			return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 		} catch {
-			return iso;
+			return;
 		}
 	}
 </script>
@@ -128,10 +128,10 @@
 				<div class="sm:col-span-2">
 					<label for="dt" class="field-label block">Analysis date</label>
 					<div class="relative">
-						<input id="dt" type="date" class="field-input pl-11" />
-						<!-- <span
-							class="absolute right-16 top-1/2 -translate-y-1/2 text-xs text-ink-soft pointer-events-none hidden sm:inline"
-							>{formattedDate(created_at)}</span> -->
+						<div id="dt" type="text" class="field-input py-6 pl-11" ></div>
+						<span
+							class="absolute left-16 top-1/2 -translate-y-1/2 text-sm text-ink-soft pointer-events-none hidden sm:inline"
+							>{formattedDate()}</span>
 
 						<svg
 							class="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
