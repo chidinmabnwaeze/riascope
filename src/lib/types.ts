@@ -10,7 +10,7 @@ export interface PatientInfo {
 }
 
 export interface DiagnosticRecord {
-	id: string;            // record id
+	id: number;            // record id
 	patientId: string;
 	firstName: string;
 	surname: string;
@@ -22,6 +22,7 @@ export interface DiagnosticRecord {
 }
 
 export interface ActiveSession extends PatientInfo {
+	userId: number | null; // DB-assigned id returned after patient creation
 	filmType: FilmType;
 	snapshots: string[];
 }

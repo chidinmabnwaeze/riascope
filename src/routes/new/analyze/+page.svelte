@@ -1,19 +1,18 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import PageShell from '../../../components/PageShell.svelte';
-	import { activeSession, sampleSnapshots, addRecord } from '$lib/stores';
-	import type { ActiveSession, DiagnosticRecord, AnalysisStatus, AnalysisGrade } from '$lib/types';
+	import { activeSession, addRecord, setActiveRecord } from '$lib/stores';
+	import api from '$lib/api';
+	import type { ActiveSession, DiagnosticRecord } from '$lib/types';
 
-	let backendUrl = 'http://192.168.1.22:8000';
-	let userId = 1; // placeholder user ID for demonstration purposes
-	let statusMessage = 'System Ready.';
-	let isAnalyzing = false;
+	const backendUrl = (import.meta.env.VITE_PUBLIC_API_URL as string)?.replace(/\/$/, '') ?? '';
+	let isAnalyzing = $state(false);
 
 	let session = $state<ActiveSession>({
-		firstName: '',
+		first_name: '',
 		surname: '',
-		patientId: '',
-		created_at: '',
+		patient_id: '',
+		userId: null,
 		filmType: null,
 		snapshots: []
 	});
@@ -22,26 +21,26 @@
 		session = { ...s };
 	})();
 
-	let liveImageIndex = $state(0);
-	let analyzing = $state(false);
-	let showCancelModal = $state(false);
-	let pulseIndex = $state(0);
-	let takingSnapshot = $state(false);
+	function mapRecord(raw: any): DiagnosticRecord {
+		return {
+			id: raw.id,
+			patientId: raw.patient_id ?? raw.patientId ?? '',
+			firstName: raw.first_name ?? raw.firstName ?? '',
+			surname: raw.surname ?? '',
+			date: raw.date ?? raw.created_at ?? new Date().toISOString(),
+			status: raw.status,
+			grade: raw.grade,
+			filmType: raw.film_type ?? raw.filmType,
+			snapshots: raw.snapshots ?? []
+		};
+	}
 
-	// Cycle the live preview to feel like a microscope feed
-	let liveTimer: ReturnType<typeof setInterval>;
-	$effect(() => {
-		liveTimer = setInterval(() => {
-			liveImageIndex = (liveImageIndex + 1) % sampleSnapshots.length;
-			pulseIndex = (pulseIndex + 1) % 100;
-		}, 3200);
-		return () => clearInterval(liveTimer);
-	});
+	let showCancelModal = $state(false);
+	let takingSnapshot = $state(false);
 
 	function takeSnapshot() {
 		takingSnapshot = true;
-		const snap = sampleSnapshots[liveImageIndex];
-		activeSession.update((s) => ({ ...s, snapshots: [...s.snapshots, snap] }));
+		activeSession.update((s) => ({ ...s, snapshots: [...s.snapshots, `${backendUrl}/snapshot`] }));
 		setTimeout(() => (takingSnapshot = false), 250);
 	}
 
@@ -54,57 +53,26 @@
 		}
 	}
 
-	// function analyzeSample() {
-	// 	if (analyzing) return;
-	// 	analyzing = true;
-
-	// 	// Pick result based on number of snapshots — purely deterministic mock behavior.
-	// 	const hasEnough = session.snapshots.length >= 2;
-	// 	const status: AnalysisStatus = hasEnough ? 'Positive' : 'Negative';
-	// 	const grade: AnalysisGrade = status === 'Positive' ? (['1+', '2+', '3+'][session.snapshots.length % 3] as AnalysisGrade) : 'Nil';
-
-	// 	setTimeout(() => {
-	// 		const rec: DiagnosticRecord = {
-	// 			id: 'rec-' + Math.random().toString(36).slice(2, 9),
-	// 			patientId: session.patientId,
-	// 			firstName: session.firstName,
-	// 			surname: session.surname,
-	// 			date: session.created_at,
-	// 			status,
-	// 			grade,
-	// 			filmType: (session.filmType ?? 'Thin') as 'Thick' | 'Thin',
-	// 			snapshots: session.snapshots.length ? session.snapshots : sampleSnapshots.slice(0, 4)
-	// 		};
-	// 		addRecord(rec);
-	// 		goto(`/new/result?id=${rec.id}`);
-	// 	}, 1400);
-	// }
-
 	async function triggerAnalysis() {
 		isAnalyzing = true;
-		statusMessage = 'Capturing frame and running ONNX model...';
 
 		try {
-			const response = await fetch(`${backendUrl}/analyse`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					file_dir: 'CAMERA',
-					user_id: userId
-				})
+			const response = await api.post('/analyse', {
+				file_dir: 'CAMERA',
+				user_id: session.userId ?? 1,
+				film_type: session.filmType
 			});
 
-			if (!response.ok) throw new Error(`Server status ${response.status}`);
-
-			const data = await response.json();
-console.log(data);
-			// Success! Programmatically push user to the results view, passing the text response state
-			goto(`/new/result`, { state: { result: data } });
-		} catch (error) {
-			statusMessage = `Error processing frame: ${error.message}`;
+			const record = mapRecord(response.data);
+			addRecord(record);
+			setActiveRecord(record.id);
+			goto('/new/result');
+		} catch (err: any) {
+			console.error('Analysis failed:', err);
 			isAnalyzing = false;
 		}
 	}
+	
 
 	function confirmCancel() {
 		showCancelModal = false;
@@ -121,16 +89,12 @@ console.log(data);
 					<div
 						class="relative rounded-2xl overflow-hidden bg-rose-50 aspect-[16/10] sm:aspect-[16/9]"
 					>
-						<!-- Live blood smear image -->
-						{#each sampleSnapshots as src, i}
-							<img
-								src="{backendUrl}/video_feed"
-								alt="Live microscopy view"
-								class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
-								style="opacity: {i === liveImageIndex ? 1 : 0};"
-								loading={i < 2 ? 'eager' : 'lazy'}
-							/>
-						{/each}
+						<!-- Live camera feed -->
+						<img
+							src="{backendUrl}/video_feed"
+							alt="Live microscopy view"
+							class="absolute inset-0 w-full h-full object-cover"
+						/>
 
 						<!-- Scanning overlay -->
 						<div class="absolute inset-0 scanning pointer-events-none"></div>
@@ -167,7 +131,7 @@ console.log(data);
 							<button
 								class="pill-btn btn-secondary shadow-lg"
 								onclick={takeSnapshot}
-								disabled={analyzing}
+								disabled={isAnalyzing}
 							>
 								<svg
 									width="14"
@@ -240,11 +204,11 @@ console.log(data);
 				<div class="space-y-4 stagger">
 					<div>
 						<p class="field-label">Patient name</p>
-						<p class="font-semibold text-ink">{session.firstName || '—'} {session.surname || ''}</p>
+						<p class="font-semibold text-ink">{session.first_name || '—'} {session.surname || ''}</p>
 					</div>
 					<div>
 						<p class="field-label">Patient ID</p>
-						<p class="font-mono text-sm text-ink break-all">{session.patientId || '—'}</p>
+						<p class="font-mono text-sm text-ink break-all">{session.patient_id || '—'}</p>
 					</div>
 					<div>
 						<p class="field-label">Film type</p>
@@ -252,7 +216,7 @@ console.log(data);
 					</div>
 					<div>
 						<p class="field-label">Date</p>
-						<p class="font-semibold text-ink">{formatDateLong(session.created_at)}</p>
+						<p class="font-semibold text-ink">{formatDateLong(new Date().toISOString())}</p>
 					</div>
 				</div>
 
@@ -296,7 +260,7 @@ console.log(data);
 					</button>
 					<button
 						class="pill-btn btn-danger w-full"
-						disabled={analyzing}
+						disabled={isAnalyzing}
 						onclick={() => (showCancelModal = true)}
 					>
 						Cancel

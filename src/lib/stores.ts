@@ -12,10 +12,10 @@ const sampleSnapshots = [
 ];
 
 const emptySession: ActiveSession = {
-	firstName: '',
+	first_name: '',
 	surname: '',
-	patientId: '',
-	created_at: new Date().toISOString().slice(0, 10),
+	patient_id: '',
+	userId: null,
 	filmType: null,
 	snapshots: []
 };
@@ -23,97 +23,99 @@ const emptySession: ActiveSession = {
 export const activeSession = writable<ActiveSession>({ ...emptySession });
 
 export function resetSession() {
-	activeSession.set({
-		...emptySession,
-		created_at: new Date().toISOString().slice(0, 10)
-	});
+	activeSession.set({ ...emptySession });
 }
 
 /* -- Mock diagnostic records (initial seed) -- */
-const initialRecords: DiagnosticRecord[] = [
-	{
-		id: 'rec-001',
-		patientId: '4814199001zluhg7Ye',
-		firstName: 'Abimbola',
-		surname: 'Okonkwo',
-		date: '2023-09-04',
-		status: 'Positive',
-		grade: '2+',
-		filmType: 'Thin',
-		snapshots: sampleSnapshots.slice(0, 6)
-	},
-	{
-		id: 'rec-002',
-		patientId: '8755120013ndnedXH',
-		firstName: 'Adeola',
-		surname: 'Joshua',
-		date: '2023-11-02',
-		status: 'Negative',
-		grade: 'Nil',
-		filmType: 'Thick',
-		snapshots: sampleSnapshots.slice(0, 4)
-	},
-	{
-		id: 'rec-003',
-		patientId: '0915313712jenoy6S',
-		firstName: 'Adetayo',
-		surname: 'Adekunle',
-		date: '2024-01-18',
-		status: 'Positive',
-		grade: '1+',
-		filmType: 'Thin',
-		snapshots: sampleSnapshots.slice(2, 6)
-	},
-	{
-		id: 'rec-004',
-		patientId: '6857681123bptg40',
-		firstName: 'Babatunde',
-		surname: 'Balogun',
-		date: '2024-02-08',
-		status: 'Positive',
-		grade: '3+',
-		filmType: 'Thick',
-		snapshots: sampleSnapshots
-	},
-	{
-		id: 'rec-005',
-		patientId: '6571892194penbu1H',
-		firstName: 'Sade',
-		surname: 'Eluwa',
-		date: '2024-03-30',
-		status: 'Negative',
-		grade: 'Nil',
-		filmType: 'Thin',
-		snapshots: sampleSnapshots.slice(0, 3)
-	},
-	{
-		id: 'rec-006',
-		patientId: '1404516969a4hpt33',
-		firstName: 'Bankole',
-		surname: 'Otedola',
-		date: '2024-05-19',
-		status: 'Positive',
-		grade: '4+',
-		filmType: 'Thick',
-		snapshots: sampleSnapshots
-	},
-	{
-		id: 'rec-007',
-		patientId: '1233444545gjkn844',
-		firstName: 'Dara',
-		surname: 'Simi',
-		date: '2023-05-19',
-		status: 'Positive',
-		grade: '2+',
-		filmType: 'Thin',
-		snapshots: sampleSnapshots
-	}
-];
+// const initialRecords: DiagnosticRecord[] = [
+// 	{
+// 		id: 'rec-001',
+// 		patientId: '4814199001zluhg7Ye',
+// 		firstName: 'Abimbola',
+// 		surname: 'Okonkwo',
+// 		date: '2023-09-04',
+// 		status: 'Positive',
+// 		grade: '2+',
+// 		filmType: 'Thin',
+// 		snapshots: sampleSnapshots.slice(0, 6)
+// 	},
+// 	{
+// 		id: 'rec-002',
+// 		patientId: '8755120013ndnedXH',
+// 		firstName: 'Adeola',
+// 		surname: 'Joshua',
+// 		date: '2023-11-02',
+// 		status: 'Negative',
+// 		grade: 'Nil',
+// 		filmType: 'Thick',
+// 		snapshots: sampleSnapshots.slice(0, 4)
+// 	},
+// 	{
+// 		id: 'rec-003',
+// 		patientId: '0915313712jenoy6S',
+// 		firstName: 'Adetayo',
+// 		surname: 'Adekunle',
+// 		date: '2024-01-18',
+// 		status: 'Positive',
+// 		grade: '1+',
+// 		filmType: 'Thin',
+// 		snapshots: sampleSnapshots.slice(2, 6)
+// 	},
+// 	{
+// 		id: 'rec-004',
+// 		patientId: '6857681123bptg40',
+// 		firstName: 'Babatunde',
+// 		surname: 'Balogun',
+// 		date: '2024-02-08',
+// 		status: 'Positive',
+// 		grade: '3+',
+// 		filmType: 'Thick',
+// 		snapshots: sampleSnapshots
+// 	},
+// 	{
+// 		id: 'rec-005',
+// 		patientId: '6571892194penbu1H',
+// 		firstName: 'Sade',
+// 		surname: 'Eluwa',
+// 		date: '2024-03-30',
+// 		status: 'Negative',
+// 		grade: 'Nil',
+// 		filmType: 'Thin',
+// 		snapshots: sampleSnapshots.slice(0, 3)
+// 	},
+// 	{
+// 		id: 'rec-006',
+// 		patientId: '1404516969a4hpt33',
+// 		firstName: 'Bankole',
+// 		surname: 'Otedola',
+// 		date: '2024-05-19',
+// 		status: 'Positive',
+// 		grade: '4+',
+// 		filmType: 'Thick',
+// 		snapshots: sampleSnapshots
+// 	},
+// 	{
+// 		id: 'rec-007',
+// 		patientId: '1233444545gjkn844',
+// 		firstName: 'Dara',
+// 		surname: 'Simi',
+// 		date: '2023-05-19',
+// 		status: 'Positive',
+// 		grade: '2+',
+// 		filmType: 'Thin',
+// 		snapshots: sampleSnapshots
+// 	}
+// ];
 
-export const records = writable<DiagnosticRecord[]>(initialRecords);
+export const records = writable<DiagnosticRecord[]>([]);
+export const activeRecordId = writable<number | null>(null);
 
 export function addRecord(rec: DiagnosticRecord) {
 	records.update((r) => [rec, ...r]);
+}
+
+export function setActiveRecord(id: number){
+	activeRecordId.set(id);
 }
 
 export { sampleSnapshots };

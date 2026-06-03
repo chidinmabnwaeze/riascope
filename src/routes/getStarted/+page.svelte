@@ -24,7 +24,7 @@ import GetStarted from "../../components/GetStarted.svelte";
 				Get Started
 			</h2>
 			<p class="text-ink-soft mt-4 max-w-md mx-auto text-sm sm:text-base">
-				Microscopy intelligence for malaria diagnostics — analyze a new sample or revisit a past one.
+				Microscopy intelligence for malaria diagnostics. <br/> Analyze a new sample or revisit a past one.
 			</p>
 		</div>
 
@@ -85,7 +85,7 @@ import GetStarted from "../../components/GetStarted.svelte";
 					<div class="w-14 h-14 rounded-2xl bg-white/70 flex items-center justify-center mb-6 group-hover:rotate-6 transition-transform duration-300 shadow-sm">
 						<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#7d0e46" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
 							<circle cx="10" cy="10" r="6.5" />
-							<path d="M15 15l5 5" />
+							<path d="M15 15l    5 5" />
 						</svg>
 					</div>
 

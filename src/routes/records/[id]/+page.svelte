@@ -10,7 +10,7 @@
 	let allRecords = $state<DiagnosticRecord[]>(get(records));
 	records.subscribe((r) => (allRecords = r));
 
-	const record = $derived(allRecords.find((r) => r.id === page.params.id) ?? null);
+	const record = $derived(allRecords.find((r) => String(r.id) === page.params.id) ?? null);
 
 	function viewSnapshot(idx: number) {
 		if (record) goto(`/records/${record.id}/snapshot/${idx}`);

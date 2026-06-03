@@ -1,24 +1,20 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { page } from '$app/state';
-	import { get } from 'svelte/store';
+	import { derived, get } from 'svelte/store';
 	import PageShell from '../../../components/PageShell.svelte';
-	import { records, resetSession } from '$lib/stores';
+	import { activeRecordId, records, resetSession } from '$lib/stores';
 	import type { DiagnosticRecord } from '$lib/types';
 
-	let allRecords = $state<DiagnosticRecord[]>(get(records));
-	records.subscribe((r) => (allRecords = r));
+	const recordStore = derived([records, activeRecordId], ([$records, $id]) =>
+		$id !== null ? ($records.find((r) => r.id === $id) ?? null) : null
+	);
 
-	const record = $derived.by<DiagnosticRecord | null>(() => {
-		const id = page.url.searchParams.get('id');
-		return allRecords.find((r) => r.id === id) ?? allRecords[0] ?? null;
+	let record = $state<DiagnosticRecord | null>(get(recordStore));
+	recordStore.subscribe((r) => { record = r; });
+
+	records.subscribe((value) => {
+		localStorage.setItem('records', JSON.stringify(value));
 	});
-//    export let location;
-
-// 	    $: result = location.state?.result || null;
-//     $: savedFile = location.state?.savedFile || "";
-
-
 
 	function close() {
 		resetSession();
@@ -37,7 +33,15 @@
 	function formatDateLong(iso: string) {
 		try {
 			const d = new Date(iso);
-			return d.toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+			return d.toLocaleString('en-US', {
+				month: 'long',
+				day: 'numeric',
+				year: 'numeric',
+				hour: '2-digit',
+				minute: '2-digit',
+				second: '2-digit',
+				hour12: false
+			});
 		} catch {
 			return iso;
 		}
@@ -75,10 +79,14 @@
 						<div class="flex items-center gap-2.5">
 							{#if record.status === 'Positive'}
 								<span class="w-2.5 h-2.5 rounded-full bg-rose-600 animate-pulse"></span>
-								<span class="font-display italic text-2xl font-semibold text-rose-700">Positive</span>
+								<span class="font-display italic text-2xl font-semibold text-rose-700"
+									>Positive</span
+								>
 							{:else}
 								<span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-								<span class="font-display italic text-2xl font-semibold text-emerald-700">Negative</span>
+								<span class="font-display italic text-2xl font-semibold text-emerald-700"
+									>Negative</span
+								>
 							{/if}
 						</div>
 					</div>
@@ -94,7 +102,16 @@
 
 				<button class="pill-btn bg-primary-gradient w-full mt-7" onclick={viewSnapshots}>
 					View snapshots
-					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<svg
+						width="14"
+						height="14"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
 						<rect x="3" y="3" width="18" height="18" rx="2" />
 						<circle cx="8.5" cy="8.5" r="1.5" />
 						<path d="M21 15l-5-5L5 21" />
@@ -103,10 +120,21 @@
 			</div>
 
 			<div class="mt-5 flex flex-col-reverse sm:flex-row items-center justify-center gap-3">
-				<button class="pill-btn btn-secondary w-full sm:w-auto" onclick={close}>Close analysis</button>
+				<button class="pill-btn btn-secondary w-full sm:w-auto" onclick={close}
+					>Close analysis</button
+				>
 				<button class="pill-btn bg-primary-gradient w-full sm:w-auto" onclick={reanalyze}>
 					Reanalyze sample
-					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<svg
+						width="14"
+						height="14"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
 						<path d="M3 12a9 9 0 0 1 15-6.7L21 8" />
 						<path d="M21 3v5h-5" />
 						<path d="M21 12a9 9 0 0 1-15 6.7L3 16" />

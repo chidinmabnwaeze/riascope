@@ -10,14 +10,12 @@
 	let patientId = $state('');
 	// let created_at = $state(new Date().toISOString().slice(0, 10));
 	let error = $state('');
-	let loading = $state(false);
 
 	// Hydrate from store on mount
 	activeSession.subscribe((s) => {
 		if (s.first_name) firstName = s.first_name;
 		if (s.surname) surname = s.surname;
 		if (s.patient_id) patientId = s.patient_id;
-		// if (s.created_at) created_at = s.created_at;
 	})();
 
 	function cancel() {
@@ -29,32 +27,23 @@
 			first_name: firstName.trim(),
 			surname: surname.trim(),
 			patient_id: patientId.trim()
-			// created_at
 		};
 
 		try {
-			loading = true;
-
 			const response = await userService.createUser(patientData);
-
-			console.log('Patient Created:', response);
+			const newUserId: number | null = response.data?.id ?? response.data?.user_id ?? null;
 
 			activeSession.update((s) => ({
 				...s,
-				firstName: firstName.trim(),
+				first_name: firstName.trim(),
 				surname: surname.trim(),
-				patientId: patientId.trim()
-				// created_at
+				patient_id: patientId.trim(),
+				userId: newUserId
 			}));
 
 			goto('/new/film-type');
 		} catch (err: any) {
-			console.log('Creating Patient Failed:', err);
-			console.log('DATA:', err?.response?.data);
-
 			error = err?.response?.data?.message || 'Failed to create patient.';
-		} finally {
-			loading = false;
 		}
 	};
 
@@ -128,7 +117,7 @@
 				<div class="sm:col-span-2">
 					<label for="dt" class="field-label block">Analysis date</label>
 					<div class="relative">
-						<div id="dt" type="text" class="field-input py-6 pl-11" ></div>
+						<div id="dt" class="field-input py-6 pl-11"></div>
 						<span
 							class="absolute left-16 top-1/2 -translate-y-1/2 text-sm text-ink-soft pointer-events-none hidden sm:inline"
 							>{formattedDate()}</span>

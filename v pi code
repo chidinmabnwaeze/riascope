@@ -2,6 +2,7 @@ import asyncio
 import datetime
 import os
 import sqlite3
+import time
 import threading
 from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,10 +11,7 @@ from pydantic import BaseModel
 import cv2
 import numpy as np
 import onnxruntime as ort
-
-# For Raspberry Pi camera streaming integration
-from picamera2 import PiCamera2
-from picamera2.outputs import FrameOutput
+from picamera2 import Picamera2
 
 app = FastAPI()
 
@@ -30,32 +28,137 @@ DB_PATH = "app.db"
 # =========================
 # ONNX MODEL INIT
 # =========================
-session = ort.InferenceSession(
-    "model/ecobarter_beta_v1.onnx",
-    providers=["CPUExecutionProvider"]
-)
-input_name = session.get_inputs()[0].name
+if os.path.exists("model/ecobarter_beta_v1.onnx"):
+    session = ort.InferenceSession(
+        "model/ecobarter_beta_v1.onnx",
+        providers=["CPUExecutionProvider"]
+    )
+    input_name = session.get_inputs()[0].name
+else:
+    session = None
+    input_name = None
+    print(" ONNX model not found at 'model/ecobarter_beta_v1.onnx'.")
 
 # =========================
-# CAMERA STREAMING INIT
+# OPENCV PICAMERA2 GLOBAL CAMERA ENGINE
 # =========================
-picam2 = None
-frame_output = None
-camera_thread = None
+latest_jpeg_frame = None  # Storage for our active JPEG stream bytes
+latest_raw_frame = None   # Storage for the latest raw BGR frame for analysis
 
 def start_camera_capture():
-    """Initializes the hardware camera and pipes it into an in-memory buffer."""
-    global picam2, frame_output
+    """Direct camera capture thread using native Picamera2 API."""
+    global latest_jpeg_frame
+
+    print("🚀 Connecting natively to IMX477 via Picamera2...")
+    
     try:
-        picam2 = PiCamera2()
-        config = picam2.create_video_configuration(main={"size": (1280, 720), "format": "RGB888"})
-        picam2.configure(config)
+        picam = Picamera2()
         
-        frame_output = FrameOutput()
-        picam2.start_recording(frame_output, format="jpeg")
-        print("Camera capture thread started successfully.")
+        # Configure output format directly to standard RGB at 640x480
+        cam_config = picam.create_preview_configuration(
+            main={"format": "RGB888", "size": (640, 480)},
+            # controls={
+            #     "AwbEnable": True,
+            #     "AwbMode": 1  # auto white balance
+            # }
+        )
+        picam.configure(cam_config)
+        picam.start()
+        
+        print("✅ Picamera2 capture thread running smoothly without matrix faults.")
+        time.sleep(0.5)  # Allow sensor matrix to warm up auto-exposure
+        
+        while True:
+            # Capture directly into a structured numpy array
+            frame_rgb = picam.capture_array()
+            
+            if frame_rgb is not None and frame_rgb.size > 0:
+                # Picamera2 outputs standard RGB; convert to BGR for OpenCV usage
+                frame_bgr = cv2.cvtColor(frame_rgb, cv2.COLOR_RGB2BGR)
+                
+               # Save original frame for AI
+                latest_raw_frame = frame_bgr.copy()
+
+                # Create display copy
+                display_frame = frame_bgr.copy()
+
+                h, w = display_frame.shape[:2]
+
+                # ROI (Region Of Interest)
+                x1 = int(w * 0.2)
+                y1 = int(h * 0.2)
+                x2 = int(w * 0.8)
+                y2 = int(h * 0.8)
+
+                # --------------------------
+                # Darken outside the box
+                # --------------------------
+                overlay = display_frame.copy()
+
+                cv2.rectangle(
+                    overlay,
+                    (0, 0),
+                    (w, h),
+                    (0, 0, 0),
+                    -1
+                )
+
+                cv2.rectangle(
+                    overlay,
+                    (x1, y1),
+                    (x2, y2),
+                    (255, 255, 255),
+                    -1
+                )
+
+                display_frame = cv2.addWeighted(
+                    overlay,
+                    0.25,
+                    display_frame,
+                    0.75,
+                    0
+                )
+
+                # --------------------------
+                # Draw corner markers
+                # --------------------------
+                corner = 30
+                thickness = 3
+                green = (0, 255, 0)
+
+                # Top Left
+                cv2.line(display_frame, (x1, y1), (x1 + corner, y1), green, thickness)
+                cv2.line(display_frame, (x1, y1), (x1, y1 + corner), green, thickness)
+
+                # Top Right
+                cv2.line(display_frame, (x2, y1), (x2 - corner, y1), green, thickness)
+                cv2.line(display_frame, (x2, y1), (x2, y1 + corner), green, thickness)
+
+                # Bottom Left
+                cv2.line(display_frame, (x1, y2), (x1 + corner, y2), green, thickness)
+                cv2.line(display_frame, (x1, y2), (x1, y2 - corner), green, thickness)
+
+                # Bottom Right
+                cv2.line(display_frame, (x2, y2), (x2 - corner, y2), green, thickness)
+                cv2.line(display_frame, (x2, y2), (x2, y2 - corner), green, thickness)
+
+                # Compress the raw BGR matrix frame into a JPEG byte sequence
+                _, buffer = cv2.imencode('.jpg', display_frame)
+                latest_jpeg_frame = buffer.tobytes()
+            else:
+                time.sleep(0.05)
+                continue
+              
+            time.sleep(0.03)  # Stable ~30 FPS pacing footprint
+
     except Exception as e:
-        print(f"Camera Initialization Failed (Are you running on a Pi?): {e}")
+        print(f"❌ CRITICAL: Picamera2 thread crashed: {e}")
+    finally:
+        if 'picam' in locals():
+            picam.stop()
+            print("📷 Camera released cleanly.")
+
+
 
 # =========================
 # DATABASE INIT
@@ -89,7 +192,6 @@ def init_db():
 @app.on_event("startup")
 async def startup_event():
     init_db()
-    # Spin camera capture up in a dedicated thread to keep standard API loops hyper-fast
     global camera_thread
     camera_thread = threading.Thread(target=start_camera_capture, daemon=True)
     camera_thread.start()
@@ -103,7 +205,7 @@ class User(BaseModel):
     surname: str
 
 class AnalyseRequest(BaseModel):
-    file_dir: str  # Set to "CAMERA" if you want to analyze the live camera frame!
+    file_dir: str  
     user_id: int  
 
 # =========================
@@ -120,7 +222,9 @@ def preprocess_image(img):
     return img
 
 def run_model(image_path_or_cv_img):
-    # Check if we passed a file path string or a raw decoded NumPy image matrix
+    if session is None:
+        return {"status": "mock_success", "grade": "Class_Fallback_Mode"}
+
     if isinstance(image_path_or_cv_img, str):
         img_matrix = cv2.imread(image_path_or_cv_img)
     else:
@@ -133,9 +237,6 @@ def run_model(image_path_or_cv_img):
     outputs = session.run(None, {input_name: img})
     raw_predictions = outputs[0]
     
-    # NOTE: Your model returns a raw array, but your endpoint treats it as a dict.
-    # Map your raw ONNX floating-point outputs to status and grade classes here!
-    # Example parsing placeholder:
     parsed_result = {
         "status": "success", 
         "grade": f"Class_{np.argmax(raw_predictions)}"
@@ -144,21 +245,18 @@ def run_model(image_path_or_cv_img):
 
 async def frame_generator():
     """Asynchronous generator streaming real-time MJPEG chunks to client."""
-    global frame_output
+    global latest_jpeg_frame
     while True:
-        if frame_output is not None:
-            frame = frame_output.get_frame()
-            if frame:
-                yield (b'--frame\r\n'
-                       b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-        await asyncio.sleep(0.04) # Enforces ~25 FPS non-blocking cadence
+        if latest_jpeg_frame is not None:
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + latest_jpeg_frame + b'\r\n')
+        await asyncio.sleep(0.04) 
 
 # =========================
 # CAMERA STREAM ENDPOINTS
 # =========================
 @app.get("/video_feed")
 async def video_feed():
-    """Point your HTML frontend <img> tag src directly here for live video."""
     return StreamingResponse(
         frame_generator(), 
         media_type="multipart/x-mixed-replace; boundary=frame"
@@ -166,15 +264,13 @@ async def video_feed():
 
 @app.get("/snapshot")
 async def snapshot():
-    """Grabs a single high-quality snapshot frame on demand."""
-    if frame_output is not None:
-        frame = frame_output.get_frame()
-        if frame:
-            return Response(content=frame, media_type="image/jpeg")
-    return Response(status_code=503, content="Camera frame buffer unreadable")
+    global latest_jpeg_frame
+    if latest_jpeg_frame is not None:
+        return Response(content=latest_jpeg_frame, media_type="image/jpeg")
+    return Response(status_code=503, content="Camera frame buffer empty")
 
 # =========================
-# EXISTING CRUD ENDPOINTS (THREAD SAFE)
+# CRUD ENDPOINTS (THREAD SAFE)
 # =========================
 @app.post("/users")
 def create_user(user: User):
@@ -237,30 +333,34 @@ def get_all_users(patient_id: str = None, name: str = None):
 # =========================
 @app.post("/analyse")
 def analyse(req: AnalyseRequest):
-    global frame_output
+    global latest_jpeg_frame
     
-    # COOL ADDITION: If file_dir is sent as "CAMERA", dynamically analyze the live stream!
     if req.file_dir.upper() == "CAMERA":
-        if frame_output is None or frame_output.get_frame() is None:
+        if latest_jpeg_frame is None:
             return {"error": "Camera stream is active but frame buffer is empty."}
         
-        raw_bytes = frame_output.get_frame()
-        # Decode the live frame bytes directly into an OpenCV matrix
-        nparr = np.frombuffer(raw_bytes, np.uint8)
-        target_img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        #raw_bytes = latest_jpeg_frame
+        #nparr = np.frombuffer(raw_bytes, np.uint8)
+        #target_img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        target_img = latest_raw_frame.copy()
+        h, w = target_img.shape[:2]
+
+        x1 = int(w * 0.2)
+        y1 = int(h * 0.2)
+        x2 = int(w * 0.8)
+        y2 = int(h * 0.8)
+
+        target_img = target_img[y1:y2, x1:x2]
         save_location = f"analysis_snapshots/live_{int(datetime.datetime.now().timestamp())}.jpg"
         
-        # Save snapshot for archival records
         os.makedirs("analysis_snapshots", exist_ok=True)
         cv2.imwrite(save_location, target_img)
         req.file_dir = save_location
     else:
-        # Standard local file path routing
         if not os.path.exists(req.file_dir):
             return {"error": "File not found"}
         target_img = req.file_dir
 
-    # Process via ONNX model engine
     pred = run_model(target_img)
 
     if pred is None:
@@ -291,7 +391,7 @@ def analyse(req: AnalyseRequest):
         "saved_file": req.file_dir
     }
 
-@app.get("/analysis/{user_id}") # Get all analyses for a specific user, including their name details
+@app.get("/analysis/{user_id}")
 def get_analysis(user_id: int):
     with sqlite3.connect(DB_PATH) as conn:
         cursor = conn.cursor()
@@ -314,7 +414,7 @@ def get_analysis(user_id: int):
         ]
     }
 
-@app.get("/analysis/id/{id}") # Get a specific analysis by its ID, including the associated user's name details
+@app.get("/analysis/id/{id}")
 def get_analysis_by_id(id: int):
     with sqlite3.connect(DB_PATH) as conn:
         cursor = conn.cursor()
