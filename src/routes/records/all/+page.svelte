@@ -4,6 +4,7 @@
 	import BackButton from '../../../components/BackButton.svelte';
 	import { records } from '$lib/stores';
 	import type { DiagnosticRecord } from '$lib/types';
+	import { userService } from '$lib/services/user';
 
 	let query = $state('');
 	let allRecords = $state<DiagnosticRecord[]>([]);
@@ -15,12 +16,39 @@
 		if (!q) return allRecords;
 		return allRecords.filter(
 			(r) =>
-				r.firstName.toLowerCase().includes(q) ||
+				r.first_name.toLowerCase().includes(q) ||
 				r.surname.toLowerCase().includes(q) ||
-				r.patientId.toLowerCase().includes(q) ||
-				r.date.includes(q)
+				r.patient_id.toLowerCase().includes(q) ||
+				r.created_at.includes(q)
 		);
 	});
+
+	const getRecords = async () => {
+		try {
+			const response = await userService.getUsers();
+			allRecords = response.data.users;
+		} catch (error) {
+			console.error('Failed to fetch records:', error);
+		}
+	};
+
+	$effect(() => {
+		getRecords();
+	});
+
+	function formatDate(date: string) {
+		try {
+			const formattedDate = new Date(date).toLocaleDateString('en-US', {
+				month: 'short',
+				day: 'numeric',
+				year: 'numeric'
+			});
+			return formattedDate;
+		} catch (error) {
+			console.error('Failed to format date:', error);
+			return date;
+		}
+	}
 
 	function open(rec: DiagnosticRecord) {
 		goto(`/records/${rec.id}`);
@@ -36,11 +64,23 @@
 		<div class="glass-card p-5 sm:p-7">
 			<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
 				<div>
-					<h3 class="font-display italic text-xl text-rose-800 font-semibold">Diagnostic records</h3>
+					<h3 class="font-display italic text-xl text-rose-800 font-semibold">
+						Diagnostic records
+					</h3>
 					<p class="text-xs text-ink-soft mt-1">{filtered.length} of {allRecords.length} records</p>
 				</div>
 				<div class="relative w-full sm:w-72">
-					<svg class="absolute left-3.5 top-1/2 -translate-y-1/2" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9c1758" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<svg
+						class="absolute left-3.5 top-1/2 -translate-y-1/2"
+						width="16"
+						height="16"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="#9c1758"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
 						<circle cx="11" cy="11" r="7" />
 						<path d="M21 21l-4.3-4.3" />
 					</svg>
@@ -57,7 +97,9 @@
 			<div class="hidden md:block overflow-hidden rounded-2xl border border-rose-100/80">
 				<table class="w-full">
 					<thead>
-						<tr class="bg-rose-50/70 text-left text-xs uppercase tracking-wider text-ink-soft font-semibold">
+						<tr
+							class="bg-rose-50/70 text-left text-xs uppercase tracking-wider text-ink-soft font-semibold"
+						>
 							<th class="px-5 py-3">Patient ID</th>
 							<th class="px-5 py-3">Firstname</th>
 							<th class="px-5 py-3">Surname</th>
@@ -73,26 +115,46 @@
 								style="animation-delay: {i * 0.03}s;"
 								onclick={() => open(rec)}
 							>
-								<td class="px-5 py-3.5 font-mono text-xs text-ink/80 truncate max-w-[180px]">{rec.patientId}</td>
-								<td class="px-5 py-3.5 text-sm font-medium">{rec.firstName}</td>
+								<td class="px-5 py-3.5 font-mono text-xs text-ink/80 truncate max-w-[180px]"
+									>{rec.patient_id}</td
+								>
+								<td class="px-5 py-3.5 text-sm font-medium">{rec.first_name}</td>
 								<td class="px-5 py-3.5 text-sm font-medium">{rec.surname}</td>
-								<td class="px-5 py-3.5 text-sm text-ink-soft tabular-nums">{rec.date}</td>
+								<td class="px-5 py-3.5 text-sm text-ink-soft tabular-nums"
+									>{formatDate(rec.created_at)}</td
+								>
 								<td class="px-5 py-3.5 text-right">
 									{#if rec.status === 'Positive'}
-										<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 text-xs font-semibold border border-rose-200">
+										<span
+											class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 text-xs font-semibold border border-rose-200"
+										>
 											<span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span>
 											{rec.status} · {rec.grade}
 										</span>
 									{:else}
-										<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-200">
+										<span
+											class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-200"
+										>
 											<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
 											{rec.status}
 										</span>
 									{/if}
 								</td>
 								<td class="px-5 py-3.5 text-right">
-									<button class="w-8 h-8 rounded-lg hover:bg-rose-100 inline-flex items-center justify-center transition-colors" aria-label="Open record">
-										<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7d0e46" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<button
+										class="w-8 h-8 rounded-lg hover:bg-rose-100 inline-flex items-center justify-center transition-colors"
+										aria-label="Open record"
+									>
+										<svg
+											width="14"
+											height="14"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="#7d0e46"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+										>
 											<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
 											<path d="M15 3h6v6" />
 											<path d="M10 14L21 3" />
@@ -115,16 +177,22 @@
 					>
 						<div class="flex items-start justify-between gap-3 mb-2">
 							<div class="min-w-0 flex-1">
-								<p class="font-semibold text-sm truncate">{rec.firstName} {rec.surname}</p>
-								<p class="font-mono text-[11px] text-ink/60 truncate">{rec.patientId}</p>
+								<p class="font-semibold text-sm truncate">{rec.first_name} {rec.surname}</p>
+								<p class="font-mono text-[11px] text-ink/60 truncate">{rec.patient_id}</p>
 							</div>
 							{#if rec.status === 'Positive'}
-								<span class="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 text-[10px] font-bold border border-rose-200">{rec.grade}</span>
+								<span
+									class="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 text-[10px] font-bold border border-rose-200"
+									>{rec.grade}</span
+								>
 							{:else}
-								<span class="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200">Neg</span>
+								<span
+									class="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200"
+									>Neg</span
+								>
 							{/if}
 						</div>
-						<p class="text-xs text-ink-soft tabular-nums">{rec.date}</p>
+						<p class="text-xs text-ink-soft tabular-nums">{formatDate(rec.created_at)}</p>
 					</button>
 				{/each}
 			</div>

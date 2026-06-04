@@ -2,19 +2,41 @@
 	import { goto } from '$app/navigation';
 	import PageShell from '../../components/PageShell.svelte';
 	import { records } from '$lib/stores';
-	import type { DiagnosticRecord } from '$lib/types';
+	import type { PatientInfo, DiagnosticRecord } from '$lib/types';
+	import { userService } from '$lib/services/user';
 
 	let firstName = $state('');
 	let surname = $state('');
 	let patientId = $state('');
 	let analysisDate = $state('');
 	let allRecords = $state<DiagnosticRecord[]>([]);
+	let user = $state({
+		first_name: '',
+		surname: '',
+		patient_id: '',
+		created_at: ''
+	});
 
 	records.subscribe((r) => (allRecords = r))();
 
 	function back() {
 		goto('/');
 	}
+
+	const getUser = async (data: PatientInfo) => {
+		data = {
+			first_name: data.first_name,
+			surname: data.surname,
+			patient_id: data.patient_id
+			// created_at: data.created_at,
+		};
+		try {
+			const response = await userService.getUsers(data);
+			user = response.data;
+		} catch (err) {
+			console.error('Error fetching user:', err);
+		}
+	};
 
 	function search() {
 		const fn = firstName.trim().toLowerCase();
@@ -30,10 +52,10 @@
 		}
 
 		const match = allRecords.find((r) => {
-			const matchFn = !fn || r.firstName.toLowerCase().includes(fn);
+			const matchFn = !fn || r.first_name.toLowerCase().includes(fn);
 			const matchSn = !sn || r.surname.toLowerCase().includes(sn);
-			const matchPid = !pid || r.patientId.toLowerCase().includes(pid);
-			const matchDt = !dt || r.date === dt;
+			const matchPid = !pid || r.patient_id.toLowerCase().includes(pid);
+			const matchDt = !dt || r.created_at.startsWith(dt);
 			return matchFn && matchSn && matchPid && matchDt;
 		});
 

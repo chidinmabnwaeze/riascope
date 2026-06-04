@@ -6,7 +6,7 @@ createUser : async(data:PatientInfo)=>{
     const response = await api.post("/users", data)
     return response;
 },
-getUser: async()=>{
+getUsers: async()=>{
     const response = await api.get("/users")
     return response;
 },

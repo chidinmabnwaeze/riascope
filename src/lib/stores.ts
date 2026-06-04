@@ -15,7 +15,7 @@ const emptySession: ActiveSession = {
 	first_name: '',
 	surname: '',
 	patient_id: '',
-	userId: null,
+	user_id: null,
 	filmType: null,
 	snapshots: []
 };

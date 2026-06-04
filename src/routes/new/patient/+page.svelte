@@ -38,7 +38,7 @@
 				first_name: firstName.trim(),
 				surname: surname.trim(),
 				patient_id: patientId.trim(),
-				userId: newUserId
+				user_id: newUserId
 			}));
 
 			goto('/new/film-type');

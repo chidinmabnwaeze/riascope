@@ -56,7 +56,7 @@
 				<div class="grid grid-cols-1 sm:grid-cols-2 gap-5 pb-5 border-b border-rose-100/80 stagger">
 					<div>
 						<p class="field-label">Firstname</p>
-						<p class="font-semibold text-ink text-lg">{record.firstName}</p>
+						<p class="font-semibold text-ink text-lg">{record.first_name}</p>
 					</div>
 					<div>
 						<p class="field-label">Surname</p>
@@ -64,11 +64,11 @@
 					</div>
 					<div>
 						<p class="field-label">Patient ID</p>
-						<p class="font-mono text-sm text-ink break-all">{record.patientId}</p>
+						<p class="font-mono text-sm text-ink break-all">{record.patient_id}</p>
 					</div>
 					<div>
 						<p class="field-label">Date</p>
-						<p class="font-semibold text-ink text-sm">{formatDateLong(record.date)}</p>
+						<p class="font-semibold text-ink text-sm">{formatDateLong(record.created_at)}</p>
 					</div>
 				</div>
 
@@ -96,7 +96,7 @@
 					</div>
 					<div>
 						<p class="field-label">Film type</p>
-						<p class="font-semibold text-ink text-lg">{record.filmType}</p>
+						<p class="font-semibold text-ink text-lg">{record.film_type}</p>
 					</div>
 				</div>
 

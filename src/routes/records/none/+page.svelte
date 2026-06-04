@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import PageShell from '$lib/components/PageShell.svelte';
-	import BackButton from '$lib/components/BackButton.svelte';
+	import PageShell from '../../../components/PageShell.svelte';
+	import BackButton from '../../../components/BackButton.svelte';
 </script>
 
 <PageShell title="Patient records">

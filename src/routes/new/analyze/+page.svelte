@@ -12,7 +12,7 @@
 		first_name: '',
 		surname: '',
 		patient_id: '',
-		userId: null,
+		user_id: null,
 		filmType: null,
 		snapshots: []
 	});
@@ -24,14 +24,14 @@
 	function mapRecord(raw: any): DiagnosticRecord {
 		return {
 			id: raw.id,
-			patientId: raw.patient_id ?? raw.patientId ?? '',
-			firstName: raw.first_name ?? raw.firstName ?? '',
-			surname: raw.surname ?? '',
-			date: raw.date ?? raw.created_at ?? new Date().toISOString(),
+			patient_id: raw.patient_id ?? session.patient_id ?? '',
+			first_name: raw.user?.first_name ?? raw.first_name ?? session.first_name,
+			surname: raw.user?.surname ?? raw.surname ?? session.surname,
+			created_at: raw.created_at ?? new Date().toISOString(),
 			status: raw.status,
 			grade: raw.grade,
-			filmType: raw.film_type ?? raw.filmType,
-			snapshots: raw.snapshots ?? []
+			film_type: raw.film_type ?? (session.filmType as 'Thick' | 'Thin'),
+			snapshots: raw.file_dir ? [raw.file_dir] : (raw.snapshots ?? [])
 		};
 	}
 
@@ -59,7 +59,7 @@
 		try {
 			const response = await api.post('/analyse', {
 				file_dir: 'CAMERA',
-				user_id: session.userId ?? 1,
+				user_id: session.user_id ?? 1,
 				film_type: session.filmType
 			});
 
