@@ -12,8 +12,8 @@
 	let allRecords = $state<DiagnosticRecord[]>(get(records));
 	records.subscribe((r) => (allRecords = r));
 
-	let record = $state<DiagnosticRecord|null>(null);
-	let analysisResult = $state<UserAnalysisResult|null>(null);
+	let record = $state<DiagnosticRecord | null>(null);
+	let analysisResult = $state<UserAnalysisResult | null>(null);
 
 	const id = Number(get(page).params.id);
 
@@ -46,23 +46,19 @@
 		getUserById(id);
 	});
 
-	$effect(()=>{
-		const getUserAnalysis = async (user_id:number)=>{
+	$effect(() => {
+		const getUserAnalysis = async (user_id: number) => {
 			const response = await analyseService.getanalysisByUserId(user_id);
 			analysisResult = response.data;
-			console.log("Analysis result:", analysisResult);
-		}
+		};
 		getUserAnalysis(id);
-
-	})
-	
-
+	});
 </script>
 
 <PageShell title="Patient result">
 	<div class="w-full max-w-2xl mx-auto mt-2 fade-in">
 		<div class="mb-4">
-			<BackButton href="/records/all" />
+			<BackButton href="/records" />
 		</div>
 
 		{#if record}
@@ -136,7 +132,7 @@
 							aria-label="View snapshot {i + 1}"
 						>
 							<img
-								src={snap.file_dir}
+								src={`http://192.168.1.22:8000/${snap.file_dir}`}
 								alt="Snapshot {i + 1}"
 								class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
 								loading="lazy"
@@ -155,7 +151,7 @@
 		{:else}
 			<div class="glass-card p-10 text-center">
 				<p class="text-ink-soft">Record not found.</p>
-				<button class="pill-btn btn-primary mt-5" onclick={() => goto('/records/all')}
+				<button class="pill-btn btn-primary mt-5" onclick={() => goto('/records')}
 					>Browse all records</button
 				>
 			</div>

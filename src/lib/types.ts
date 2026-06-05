@@ -1,5 +1,5 @@
 export type FilmType = 'Thick' | 'Thin' | null;
-export type AnalysisStatus = 'Positive' | 'Negative';
+export type AnalysisStatus = 'positive' | 'negative';
 export type AnalysisGrade = '1+' | '2+' | '3+' | '4+' | 'Nil';
 
 export interface PatientInfo {

@@ -124,7 +124,7 @@
 									>{formatDate(rec.created_at)}</td
 								>
 								<td class="px-5 py-3.5 text-right">
-									{#if rec.status === 'Positive'}
+									{#if rec.status === 'positive'}
 										<span
 											class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 text-xs font-semibold border border-rose-200"
 										>
@@ -180,7 +180,7 @@
 								<p class="font-semibold text-sm truncate">{rec.first_name} {rec.surname}</p>
 								<p class="font-mono text-[11px] text-ink/60 truncate">{rec.patient_id}</p>
 							</div>
-							{#if rec.status === 'Positive'}
+							{#if rec.status === 'positive'}
 								<span
 									class="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 text-[10px] font-bold border border-rose-200"
 									>{rec.grade}</span

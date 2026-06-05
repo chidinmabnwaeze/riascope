@@ -77,7 +77,7 @@
 					<div>
 						<p class="field-label">Status</p>
 						<div class="flex items-center gap-2.5">
-							{#if record.status === 'Positive'}
+							{#if record.status === 'positive'}
 								<span class="w-2.5 h-2.5 rounded-full bg-rose-600 animate-pulse"></span>
 								<span class="font-display italic text-2xl font-semibold text-rose-700"
 									>Positive</span

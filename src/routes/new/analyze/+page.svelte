@@ -23,7 +23,7 @@
 
 	function mapRecord(raw: any): DiagnosticRecord {
 		return {
-			id: raw.id,
+			id: raw.user_id ?? raw.id,
 			patient_id: raw.patient_id ?? session.patient_id ?? '',
 			first_name: raw.user?.first_name ?? raw.first_name ?? session.first_name,
 			surname: raw.user?.surname ?? raw.surname ?? session.surname,
@@ -59,7 +59,7 @@
 		try {
 			const response = await api.post('/analyse', {
 				file_dir: 'CAMERA',
-				user_id: session.user_id ?? 1,
+				user_id: session.user_id,
 				film_type: session.filmType
 			});
 
@@ -72,7 +72,6 @@
 			isAnalyzing = false;
 		}
 	}
-	
 
 	function confirmCancel() {
 		showCancelModal = false;
@@ -204,7 +203,10 @@
 				<div class="space-y-4 stagger">
 					<div>
 						<p class="field-label">Patient name</p>
-						<p class="font-semibold text-ink">{session.first_name || '—'} {session.surname || ''}</p>
+						<p class="font-semibold text-ink">
+							{session.first_name || '—'}
+							{session.surname || ''}
+						</p>
 					</div>
 					<div>
 						<p class="field-label">Patient ID</p>

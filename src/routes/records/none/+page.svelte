@@ -29,8 +29,8 @@
 			</p>
 
 			<div class="mt-7 flex flex-col-reverse sm:flex-row gap-3 justify-center">
-				<button class="pill-btn btn-secondary" onclick={() => goto('/records')}>Refine search</button>
-				<button class="pill-btn btn-primary" onclick={() => goto('/records/all')}>
+				<!-- <button class="pill-btn btn-secondary" onclick={() => goto('/records')}>Refine search</button> -->
+				<button class="pill-btn btn-primary" onclick={() => goto('/records')}>
 					Browse all records
 					<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
 				</button>

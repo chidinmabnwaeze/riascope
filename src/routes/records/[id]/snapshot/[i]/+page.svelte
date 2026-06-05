@@ -6,6 +6,8 @@
 	import { analyseService } from '$lib/services/analyse';
 	import type { UserAnalysisResult, AnalysisItem } from '$lib/types';
 
+	const backendUrl = (import.meta.env.VITE_PUBLIC_API_URL as string)?.replace(/\/$/, '') ?? '';
+
 	const userId = $derived(Number(page.params.id));
 	const currentIndex = $derived(parseInt(page.params.i ?? '0', 10) || 0);
 
@@ -61,7 +63,7 @@
 				<div class="relative rounded-2xl overflow-hidden bg-rose-50 aspect-[16/10]">
 					{#key currentIndex}
 						<img
-							src={current.file_dir}
+							src={`${backendUrl}/${current.file_dir}`}
 							alt="Snapshot {currentIndex + 1}"
 							class="absolute inset-0 w-full h-full object-cover fade-in"
 						/>
@@ -111,7 +113,7 @@
 						</div>
 						<div>
 							<p class="field-label">Status</p>
-							<p class="font-semibold text-ink">{current.status}</p>
+							<p class="font-semibold text-ink capitalize">{current.status}</p>
 						</div>
 					</div>
 				</div>
@@ -129,7 +131,7 @@
 							aria-label="Jump to snapshot {i + 1}"
 						>
 							<img
-								src={snap.file_dir}
+								src={`${backendUrl}/${snap.file_dir}`}
 								alt="Thumbnail {i + 1}"
 								class="w-full h-full object-cover"
 								loading="lazy"
@@ -146,7 +148,7 @@
 		{:else if result}
 			<div class="glass-card p-10 text-center">
 				<p class="text-ink-soft">Snapshot not found.</p>
-				<button class="pill-btn btn-primary mt-5" onclick={() => goto('/records/all')}>Browse records</button>
+				<button class="pill-btn btn-primary mt-5" onclick={() => goto('/records')}>Browse records</button>
 			</div>
 		{:else}
 			<div class="glass-card p-10 text-center">

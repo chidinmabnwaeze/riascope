@@ -8,7 +8,6 @@
 	let firstName = $state('');
 	let surname = $state('');
 	let patientId = $state('');
-	// let created_at = $state(new Date().toISOString().slice(0, 10));
 	let error = $state('');
 
 	// Hydrate from store on mount
@@ -31,7 +30,7 @@
 
 		try {
 			const response = await userService.createUser(patientData);
-			const newUserId: number | null = response.data?.id ?? response.data?.user_id ?? null;
+			const newUserId: number | null = response.data?.id ?? null;
 
 			activeSession.update((s) => ({
 				...s,
