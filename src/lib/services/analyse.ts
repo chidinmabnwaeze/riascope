@@ -13,5 +13,9 @@ getanalysisByUserId: async(user_id: number)=>{
 getAnalysisById: async(id: number)=>{
     const response = await api.get(`/analysis/id/${id}`)
     return response;
+},
+deleteAnalysisById: async(id: number)=>{
+    const response = await api.delete(`/analysis/id/${id}`)
+    return response;
 }
 }

@@ -81,7 +81,7 @@
 
 <PageShell title="Analysis">
 	<div class="w-full max-w-7xl mx-auto mt-2 fade-in">
-		<div class="grid grid-cols-1 lg:grid-cols-[1fr,360px] gap-5">
+		<div class="grid grid-cols-1 lg:grid-cols-[2fr_320px] gap-5">
 			<!-- LIVE MICROSCOPE VIEW -->
 			<div class="relative">
 				<div class="glass-card relative overflow-hidden p-4 sm:p-5">
@@ -126,7 +126,7 @@
 						</div>
 
 						<!-- Take Snapshot button -->
-						<div class="absolute bottom-5 left-1/2 -translate-x-1/2">
+						<!-- <div class="absolute bottom-5 left-1/2 -translate-x-1/2">
 							<button
 								class="pill-btn btn-secondary shadow-lg"
 								onclick={takeSnapshot}
@@ -149,7 +149,7 @@
 								</svg>
 								Take Snapshot
 							</button>
-						</div>
+						</div> -->
 
 						<!-- Captured snapshot strip -->
 						{#if session.snapshots.length > 0}
