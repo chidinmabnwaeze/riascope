@@ -98,6 +98,15 @@
 		min-height: 100vh;
 	}
 
+	body.kb-open {
+		padding-bottom: 260px;
+	}
+
+	body.kb-open .canvas {
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
+
 	::selection {
 		background: var(--color-rose-300);
 		color: white;

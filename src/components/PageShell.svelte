@@ -10,7 +10,7 @@
 	let { title, children }: Props = $props();
 </script>
 
-<div class="canvas bg-img min-h-screen w-full overflow-hidden flex flex-col">
+<div class="canvas bg-img min-h-screen w-full overflow-x-hidden flex flex-col">
 	<!-- Floating ambient blobs -->
 	<!-- <div
 		class="pointer-events-none absolute -top-32 -left-32 w-[480px] h-[480px] rounded-full bg-rose-300/30 blur-3xl"
@@ -35,10 +35,10 @@
 		class="pointer-events-none absolute left-[-80px] bottom-24 h-[260px] w-[260px] rounded-full bg-[#d6d6ff]/20 blur-3xl"
 	></div>
 
-	<header class="relative z-10 w-full px-6 sm:px-10 pt-6 pb-2 flex items-center justify-between">
-		<a href="/" class="group inline-flex items-center gap-2.5">
-			<img src={logo} alt="Riascope Logo" />
-			<span class="font-display italic font-semibold text-2xl text-rose-700 tracking-tight"
+	<header class="relative z-10 w-full px-4 sm:px-8 pt-3 pb-1 sm:pt-5 sm:pb-2 flex items-center justify-between">
+		<a href="/" class="group inline-flex items-center gap-2">
+			<img src={logo} alt="Riascope Logo" class="h-7 w-7 sm:h-9 sm:w-9" />
+			<span class="font-display italic font-semibold text-lg sm:text-2xl text-rose-700 tracking-tight"
 				>Riascope</span
 			>
 		</a>
@@ -54,14 +54,14 @@
 	</header>
 
 	{#if title}
-		<h1 class="text-primary-gradient sm:hidden mt-2 mb-1">{title}</h1>
+		<h1 class="text-primary-gradient sm:hidden mt-1 mb-0.5 text-base px-4">{title}</h1>
 	{/if}
 
-	<main class="relative z-10 flex-1 w-full flex flex-col items-center px-4 sm:px-6 pb-10">
+	<main class="relative z-10 flex-1 w-full flex flex-col items-center px-3 sm:px-6 pb-5 sm:pb-10">
 		{@render children()}
 	</main>
 
-	<footer class="relative z-10 text-center text-[11px] text-ink/40 pb-4 px-6 tracking-wide">
+	<footer class="relative z-10 text-center text-[10px] text-ink/40 pb-2 px-6 tracking-wide">
 		<span class="font-display italic">Riascope</span> · Microscopy intelligence for malaria diagnostics
 	</footer>
 </div>

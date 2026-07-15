@@ -1,5 +1,6 @@
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.svg';
+	import VirtualKeyboard from '../components/VirtualKeyboard.svelte';
 
 	let { children } = $props();
 	import "../app.css";
@@ -10,3 +11,4 @@
 </svelte:head>
 
 {@render children()}
+<VirtualKeyboard />

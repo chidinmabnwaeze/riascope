@@ -80,8 +80,8 @@
 </script>
 
 <PageShell title="Analysis">
-	<div class="w-full max-w-7xl mx-auto mt-2 fade-in">
-		<div class="grid grid-cols-1 lg:grid-cols-[2fr_320px] gap-5">
+	<div class="w-full max-w-7xl mx-auto mt-1 fade-in">
+		<div class="grid grid-cols-1 md:grid-cols-[2fr_260px] gap-3 sm:gap-5">
 			<!-- LIVE MICROSCOPE VIEW -->
 			<div class="relative">
 				<div class="glass-card relative overflow-hidden p-4 sm:p-5">
@@ -181,7 +181,7 @@
 			</div>
 
 			<!-- SIDE PANEL -->
-			<aside class="glass-card p-6 sm:p-7 flex flex-col">
+			<aside class="glass-card p-4 sm:p-5 flex flex-col">
 				<div class="flex items-center gap-2 mb-5">
 					<div class="w-7 h-7 rounded-full bg-rose-100 flex items-center justify-center">
 						<svg
@@ -245,9 +245,9 @@
 									stroke-linecap="round"
 								/>
 							</svg>
-							Analyzing…
+							Analysing…
 						{:else}
-							Analyze sample
+							Analyse sample
 							<svg
 								width="14"
 								height="14"
@@ -303,7 +303,7 @@
 			</p>
 			<div class="flex flex-col-reverse sm:flex-row gap-3 justify-center">
 				<button class="pill-btn btn-secondary" onclick={() => (showCancelModal = false)}
-					>No, keep analyzing</button
+					>No, keep analysing</button
 				>
 				<button class="pill-btn btn-danger" onclick={confirmCancel}>Yes, cancel</button>
 			</div>

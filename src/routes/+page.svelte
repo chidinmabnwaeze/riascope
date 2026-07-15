@@ -18,31 +18,31 @@
 	></div>
 
 	<div
-		class="relative mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-center px-6 py-24 text-center"
+		class="relative mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-center px-6 py-8 sm:py-16 md:py-24 text-center"
 	>
-		<div class="space-y-10">
+		<div class="space-y-5 sm:space-y-8">
 			<div
-				class="mx-auto flex h-20 w-20 items-center justify-center rounded-full shadow-[0_20px_70px_rgba(119,70,159,0.14)] backdrop-blur-md"
+				class="mx-auto flex h-14 w-14 sm:h-20 sm:w-20 items-center justify-center rounded-full shadow-[0_20px_70px_rgba(119,70,159,0.14)] backdrop-blur-md"
 			>
 				<img src={img} alt="Riascope Logo" />
 			</div>
 
 			<h1
-				class="text-4xl font-bold leading-tight tracking-[-0.03em] text-slate-950 sm:text-5xl md:text-6xl"
+				class="text-3xl font-bold leading-tight tracking-[-0.03em] text-slate-950 sm:text-5xl md:text-6xl"
 			>
 				<span class="text-primary-gradient bg-clip-text text-transparent">
 					Welcome to Riascope
 				</span>
 			</h1>
 
-			<p class="mx-auto max-w-2xl text-base leading-8 text-slate-700 sm:text-lg">
+			<p class="mx-auto max-w-2xl text-sm leading-6 text-slate-700 sm:text-lg sm:leading-8">
 				Leveraging advanced AI to deliver rapid and precise malaria diagnostics. Start a new session
 				to begin sample analysis or review your saved clinical records.
 			</p>
 
 			<a
 				href="/getStarted"
-				class="inline-flex items-center justify-center gap-3 rounded-full bg-primary-gradient px-10 py-4 text-base font-medium text-white shadow-[0_20px_40px_rgba(119,70,159,0.28)] transition duration-200 hover:bg-[#8854d5] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7f4ecb]"
+				class="inline-flex items-center justify-center gap-3 rounded-full bg-primary-gradient px-7 py-3 text-sm font-medium text-white shadow-[0_20px_40px_rgba(119,70,159,0.28)] transition duration-200 hover:bg-[#8854d5] sm:px-10 sm:py-4 sm:text-base focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7f4ecb]"
 			>
 				{buttonLabel}
 

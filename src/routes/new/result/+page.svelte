@@ -51,7 +51,7 @@
 <PageShell title="Analysis results">
 	<div class="w-full max-w-2xl mx-auto mt-2 fade-in">
 		{#if record}
-			<div class="glass-card p-7 sm:p-9">
+			<div class="glass-card p-4 sm:p-7">
 				<!-- Patient header -->
 				<div class="grid grid-cols-1 sm:grid-cols-2 gap-5 pb-5 border-b border-rose-100/80 stagger">
 					<div>
@@ -124,7 +124,7 @@
 					>Close analysis</button
 				>
 				<button class="pill-btn bg-primary-gradient w-full sm:w-auto" onclick={reanalyze}>
-					Reanalyze sample
+					Reanalyse sample
 					<svg
 						width="14"
 						height="14"

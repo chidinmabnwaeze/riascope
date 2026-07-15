@@ -26,8 +26,6 @@ export function resetSession() {
 	activeSession.set({ ...emptySession });
 }
 
-/* -- Mock diagnostic records (initial seed) -- */
-// const initialRecords: DiagnosticRecord[] = [
 // 	{
 // 		id: 'rec-001',
 // 		patientId: '4814199001zluhg7Ye',

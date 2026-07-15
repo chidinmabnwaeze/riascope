@@ -66,21 +66,21 @@
 </script>
 
 <PageShell title="Patient details">
-	<div class="w-full max-w-2xl mx-auto mt-4 fade-in">
-		<div class="glass-card p-7 sm:p-10">
-			<div class="text-center mb-7">
-				<p class="text-xs uppercase tracking-[0.25em] text-primary-gradient font-semibold mb-2">
+	<div class="w-full max-w-2xl mx-auto mt-1 sm:mt-4 fade-in">
+		<div class="glass-card p-4 sm:p-7">
+			<div class="text-center mb-4 sm:mb-7">
+				<p class="text-xs uppercase tracking-[0.25em] text-primary-gradient font-semibold mb-1">
 					Step 1 of 3
 				</p>
-				<h2 class="font-display italic text-primary-gradient text-2xl sm:text-3xl">
+				<h2 class="font-display italic text-primary-gradient text-xl sm:text-2xl">
 					Enter patient information
 				</h2>
-				<p class="text-ink-soft text-sm mt-2">
+				<p class="text-ink-soft text-sm mt-1">
 					This information will be attached to the diagnostic record.
 				</p>
 			</div>
 
-			<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 stagger">
+			<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 stagger">
 				<div>
 					<label for="fn" class="field-label block">Patient Firstname</label>
 					<input
@@ -153,7 +153,7 @@
 				</p>
 			{/if}
 
-			<div class="flex flex-col-reverse sm:flex-row items-center justify-between gap-3 mt-8">
+			<div class="flex flex-col-reverse sm:flex-row items-center justify-between gap-3 mt-4 sm:mt-6">
 				<button class="pill-btn btn-secondary w-full sm:w-auto" onclick={cancel}>
 					<svg width="14" height="14" viewBox="0 0 16 16" fill="none"
 						><path
@@ -182,7 +182,7 @@
 		</div>
 
 		<!-- Progress dots -->
-		<div class="mt-6 flex items-center justify-center gap-2">
+		<div class="mt-3 flex items-center justify-center gap-2">
 			<span class="h-1.5 w-8 rounded-full bg-rose-600"></span>
 			<span class="h-1.5 w-3 rounded-full bg-rose-300"></span>
 			<span class="h-1.5 w-3 rounded-full bg-rose-300"></span>
